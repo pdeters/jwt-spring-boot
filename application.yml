@@ -3,6 +3,10 @@ spring:
     name: jwt-spring-boot
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=TRUE
     username: sa
     password:
+  h2:
+    console:
+      enabled: true
+      path: /h2
