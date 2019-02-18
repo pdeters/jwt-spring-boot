@@ -24,8 +24,6 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // TODO: Understand whether checking SecurityContextHolder.getContext().getAuthentication() is needed first
-
         String token = getAuthorizationToken(request)
 
         authenticate(request, token)
@@ -47,7 +45,6 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = optional.get()
 
             List<SimpleGrantedAuthority> roles = JwtUtils.getRolesFrom(claims).collect {
-                println it
                 new SimpleGrantedAuthority(it)
             }
 

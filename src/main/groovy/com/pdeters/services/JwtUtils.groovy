@@ -1,5 +1,6 @@
 package com.pdeters.services
 
+import com.pdeters.web.JwtTokenContext
 import groovy.util.logging.Slf4j
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
@@ -42,7 +43,7 @@ class JwtUtils {
     }
 
     static List<String> getRolesFrom(Claims claims) {
-        Map context = claims.get('context') as Map
-        return context.get('roles') as List
+        JwtTokenContext context = claims.get('context') as JwtTokenContext
+        return context.roles
     }
 }

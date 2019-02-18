@@ -1,6 +1,7 @@
 package com.pdeters.services
 
 import com.pdeters.web.AuthToken
+import com.pdeters.web.JwtTokenContext
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -27,13 +28,13 @@ class AuthService {
     static AuthToken generateToken(String username) {
         Date now = new Date()
 
-        Map userContext = getUserContextFor(username)
+        JwtTokenContext userContext = getUserContextFor(username)
 
         JwtBuilder builder = Jwts.builder()
                 .setIssuer('app-token-issuer')
                 .setSubject(username)
                 .setIssuedAt(now)
-                .addClaims(userContext)
+                .addClaims(userContext as Map)
                 .setExpiration(addMinutes(now, 5))
 
         String token = builder.signWith(SignatureAlgorithm.HS256, getSecret()).compact()
@@ -41,12 +42,11 @@ class AuthService {
         return new AuthToken(token: token)
     }
 
-    private static Map getUserContextFor(String username) {
-        // TODO: Implement a TokenContext container
+    private static JwtTokenContext getUserContextFor(String username) {
         if (username == 'administrator') {
-            return [context: [roles: ['ROLE_ADMIN'], displayName: 'Sally Admin']]
+            return new JwtTokenContext(roles: ['ROLE_ADMIN'], displayName: 'Sally Admin')
         } else {
-            return [context: [roles: ['ROLE_USER'], displayName: 'Joe User']]
+            return new JwtTokenContext(roles: ['ROLE_USER'], displayName: 'Joe User')
         }
     }
 
