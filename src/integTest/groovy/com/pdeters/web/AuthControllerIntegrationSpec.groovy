@@ -57,7 +57,6 @@ class AuthControllerIntegrationSpec extends Specification{
                 .andExpect(status().isCreated())
                 .andReturn()
 
-
         when:
         String response = result.getResponse().getContentAsString()
         AuthToken auth = new ObjectMapper().readValue(response, AuthToken)
@@ -71,5 +70,13 @@ class AuthControllerIntegrationSpec extends Specification{
         then:
         roles.size() == 1
         roles.contains('ROLE_USER')
+    }
+
+    def 'get proper response for bad credentials'() {
+        expect:
+        api.perform(post('/auth/token').contentType(MediaType.APPLICATION_JSON)
+                .content('''{ "username": "user", "password": "wrong" }'''))
+                .andExpect(status().isUnauthorized())
+                .andReturn()
     }
 }
