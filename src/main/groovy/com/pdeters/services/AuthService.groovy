@@ -20,6 +20,7 @@ class AuthService {
     }
 
     boolean authenticate(String user, String password) {
+        // If any non empty user knows the password, they're good
         return user && (password == ONLY_PASSWORD)
     }
 
@@ -41,6 +42,7 @@ class AuthService {
     }
 
     private static Map getUserContextFor(String username) {
+        // TODO: Implement a TokenContext container
         if (username == 'administrator') {
             return [context: [roles: ['ROLE_ADMIN'], displayName: 'Sally Admin']]
         } else {

@@ -28,13 +28,12 @@ class AuthControllerIntegrationSpec extends Specification{
         api = MockMvcBuilders.webAppContextSetup(wac).build()
     }
 
-    def 'can generate a toke for an admin'() {
+    def 'can generate a token for an admin'() {
         expect:
         MvcResult result = api.perform(post('/auth/token').contentType(MediaType.APPLICATION_JSON)
                 .content('''{ "username": "administrator", "password": "password" }'''))
                 .andExpect(status().isCreated())
                 .andReturn()
-
 
         when:
         String response = result.getResponse().getContentAsString()
@@ -44,14 +43,14 @@ class AuthControllerIntegrationSpec extends Specification{
         JwtUtils.isValidToken(auth.token)
 
         and:
-        List roles = JwtUtils.getRolesFromToken(auth.token)
+        List roles = JwtUtils.getRolesFrom(auth.token)
 
         then:
         roles.size() == 1
         roles.contains('ROLE_ADMIN')
     }
 
-    def 'can generate a toke for a user'() {
+    def 'can generate a token for a user'() {
         expect:
         MvcResult result = api.perform(post('/auth/token').contentType(MediaType.APPLICATION_JSON)
                 .content('''{ "username": "user", "password": "password" }'''))
@@ -67,7 +66,7 @@ class AuthControllerIntegrationSpec extends Specification{
         JwtUtils.isValidToken(auth.token)
 
         and:
-        List roles = JwtUtils.getRolesFromToken(auth.token)
+        List roles = JwtUtils.getRolesFrom(auth.token)
 
         then:
         roles.size() == 1

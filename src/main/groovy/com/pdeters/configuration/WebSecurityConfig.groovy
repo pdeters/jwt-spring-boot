@@ -1,12 +1,14 @@
 package com.pdeters.configuration
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
@@ -23,13 +25,19 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers('/**').permitAll() // wide open
+                .antMatchers('/auth/token').permitAll()
                 .anyRequest()
                 .authenticated()
 
-        // Everything is wide open, but if it wasn't, requests would be routed here
         http.exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+        http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class)
+    }
+
+    @Bean
+    JwtAuthenticationFilter authenticationTokenFilterBean() throws Exception {
+        return new JwtAuthenticationFilter()
     }
 }

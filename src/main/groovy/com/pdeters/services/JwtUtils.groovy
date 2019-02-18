@@ -15,22 +15,12 @@ class JwtUtils {
         return getClaimsFromToken(token).present
     }
 
-    static List getRolesFromToken(String token) {
+    static Optional<Claims> getClaimsFromToken(String token) {
 
-        Optional optional = getClaimsFromToken(token)
-
-        if (optional.present) {
-            Claims claims = optional.get()
-
-            Map context = claims.get('context') as Map
-
-            return context.get('roles') as List
+        if (!token) {
+            return Optional.empty()
         }
 
-        return []
-    }
-
-    private static Optional<Claims> getClaimsFromToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(AuthService.getSecret()).parseClaimsJws(token).getBody()
 
@@ -41,5 +31,18 @@ class JwtUtils {
         }
 
         return Optional.empty()
+    }
+
+    static List<String> getRolesFrom(String token) {
+        return getRolesFrom(getClaimsFromToken(token))
+    }
+
+    static List<String> getRolesFrom(Optional<Claims> optional) {
+        return optional.present ? getRolesFrom(optional.get()) : []
+    }
+
+    static List<String> getRolesFrom(Claims claims) {
+        Map context = claims.get('context') as Map
+        return context.get('roles') as List
     }
 }
