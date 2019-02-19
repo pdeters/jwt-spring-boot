@@ -92,6 +92,18 @@ class BookControllerIntegrationSpec extends Specification {
                 .andExpect(status().isNotFound())
     }
 
+    def 'get proper response for an expired token'() {
+        expect:
+        api.perform(get('/books').header(HttpHeaders.AUTHORIZATION, EXPIRED_AUTH_HEADER))
+                .andExpect(status().isUnauthorized())
+    }
+
+    def 'get proper response for a token from a different issuer'() {
+        expect:
+        api.perform(get('/books').header(HttpHeaders.AUTHORIZATION, WRONG_ISSUER_AUTH_HEADER))
+                .andExpect(status().isUnauthorized())
+    }
+
     String generateJwtAuthorizationHeaderFor(String username) {
         MvcResult result = api.perform(post('/auth/token').contentType(MediaType.APPLICATION_JSON)
                 .content("""{ "username": "$username", "password": "password" }"""))
@@ -103,4 +115,12 @@ class BookControllerIntegrationSpec extends Specification {
 
         return "Bearer ${auth.token}"
     }
+
+    static String EXPIRED_AUTH_HEADER = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcHAtdG9rZW4taXNzdWVyIiwic3ViIjoiYWRta\
+W5pc3RyYXRvciIsImlhdCI6MTU1MDU5MjMyMiwiY29udGV4dCI6eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImRpc3BsYXlOYW1lIjoiU2FsbHkgQWRtaW4\
+ifSwiZXhwIjoxNTUwNTkyMDIyfQ.ea7qs39R0xtdZPh-IbWKjrQ6BdHQ0NCKjoclILyGFHM"
+
+    static String WRONG_ISSUER_AUTH_HEADER = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3cm9uZy1pc3N1ZXIiLCJzdWIiOiJ1c2Vy\
+IiwiaWF0IjoxNTUwNTkzMDQyLCJjb250ZXh0Ijp7InJvbGVzIjpbIlJPTEVfVVNFUiJdLCJkaXNwbGF5TmFtZSI6IkpvZSBVc2VyIn0sImV4cCI6MTU1MD\
+U5MzM0Mn0.Bqqoyaixy6ubWvNQwXUvABx8f85jLIGAAAl97iFDOQs"
 }
