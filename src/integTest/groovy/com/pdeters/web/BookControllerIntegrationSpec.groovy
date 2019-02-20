@@ -120,7 +120,8 @@ class BookControllerIntegrationSpec extends Specification {
 W5pc3RyYXRvciIsImlhdCI6MTU1MDU5MjMyMiwiY29udGV4dCI6eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImRpc3BsYXlOYW1lIjoiU2FsbHkgQWRtaW4\
 ifSwiZXhwIjoxNTUwNTkyMDIyfQ.ea7qs39R0xtdZPh-IbWKjrQ6BdHQ0NCKjoclILyGFHM"
 
-    static String WRONG_ISSUER_AUTH_HEADER = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3cm9uZy1pc3N1ZXIiLCJzdWIiOiJ1c2Vy\
-IiwiaWF0IjoxNTUwNTkzMDQyLCJjb250ZXh0Ijp7InJvbGVzIjpbIlJPTEVfVVNFUiJdLCJkaXNwbGF5TmFtZSI6IkpvZSBVc2VyIn0sImV4cCI6MTU1MD\
-U5MzM0Mn0.Bqqoyaixy6ubWvNQwXUvABx8f85jLIGAAAl97iFDOQs"
+    // Expires in 2029, but issued by 'wrong-issuer'
+    static String WRONG_ISSUER_AUTH_HEADER = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3cm9uZy1pc3N1ZXIiLCJzdWIiOiJhZG1p\
+bmlzdHJhdG9yIiwiaWF0IjoxNTUwNzAwNjcyLCJjb250ZXh0Ijp7InJvbGVzIjpbIlJPTEVfQURNSU4iXSwiZGlzcGxheU5hbWUiOiJTYWxseSBBZG1pbi\
+J9LCJleHAiOjE4NjYzMTk4NzJ9.oj6SRgxwEIx19FpQOQrbmIie0uSDGPxDC-TBwY3QcOI"
 }

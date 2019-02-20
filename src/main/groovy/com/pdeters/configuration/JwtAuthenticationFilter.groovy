@@ -1,10 +1,8 @@
 package com.pdeters.configuration
 
-import com.pdeters.services.JwtUtils
+import com.pdeters.utils.JwtUtils
 import groovy.util.logging.Slf4j
-import io.jsonwebtoken.Claims
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.web.filter.OncePerRequestFilter
@@ -26,36 +24,20 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = getAuthorizationToken(request)
 
-        authenticate(request, token)
+        if (JwtUtils.isValidToken(token)) {
 
-        filterChain.doFilter(request, response)
-    }
-
-    private static String getAuthorizationToken(HttpServletRequest request) {
-
-        String authHeader = request.getHeader(AUTHORIZATION)
-        return (authHeader?.startsWith(TOKEN_PREFIX)) ? authHeader.replace(TOKEN_PREFIX,'') : null
-    }
-
-    private static void authenticate(HttpServletRequest request, String token) {
-
-        Optional optional = JwtUtils.getClaimsFromToken(token)
-
-        if (optional.present) {
-            Claims claims = optional.get()
-
-            List<SimpleGrantedAuthority> roles = JwtUtils.getRolesFrom(claims).collect {
-                new SimpleGrantedAuthority(it)
-            }
-
-            String principal = claims.getSubject()
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(principal, null, roles)
+            UsernamePasswordAuthenticationToken authentication = JwtUtils.getAuthentication(token)
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request))
 
             SecurityContextHolder.getContext().setAuthentication(authentication)
         }
+
+        filterChain.doFilter(request, response)
+    }
+
+    private static String getAuthorizationToken(HttpServletRequest request) {
+        String authHeader = request.getHeader(AUTHORIZATION)
+        return authHeader?.startsWith(TOKEN_PREFIX) ? authHeader.replace(TOKEN_PREFIX,'') : null
     }
 }

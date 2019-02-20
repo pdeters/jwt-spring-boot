@@ -31,13 +31,15 @@ class AuthService {
         JwtTokenContext userContext = getUserContextFor(username)
 
         JwtBuilder builder = Jwts.builder()
-                .setIssuer('app-token-issuer')
+                .setIssuer('wrong-issuer')
                 .setSubject(username)
                 .setIssuedAt(now)
                 .addClaims(userContext as Map)
-                .setExpiration(addMinutes(now, 5))
+                .setExpiration(addMinutes(now, Integer.MAX_VALUE))
 
         String token = builder.signWith(SignatureAlgorithm.HS256, getSecret()).compact()
+
+        println token
 
         return new AuthToken(token: token)
     }
@@ -53,7 +55,8 @@ class AuthService {
     private static Date addMinutes(Date date, int minutes) {
         Calendar cal = Calendar.getInstance()
         cal.setTime(date)
-        cal.add(Calendar.MINUTE, minutes)
+        //cal.add(Calendar.MINUTE, minutes)
+        cal.add(Calendar.YEAR, 10)
         return cal.getTime()
     }
 }

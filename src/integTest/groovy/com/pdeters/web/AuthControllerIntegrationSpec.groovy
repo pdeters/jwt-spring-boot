@@ -1,7 +1,8 @@
 package com.pdeters.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.pdeters.services.JwtUtils
+import com.pdeters.utils.JwtUtils
+import com.pdeters.utils.TestOnlyJwtUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
@@ -43,7 +44,7 @@ class AuthControllerIntegrationSpec extends Specification{
         JwtUtils.isValidToken(auth.token)
 
         and:
-        List roles = JwtUtils.getRolesFrom(auth.token)
+        List roles = TestOnlyJwtUtils.getRolesFromToken(auth.token)
 
         then:
         roles.size() == 1
@@ -65,7 +66,7 @@ class AuthControllerIntegrationSpec extends Specification{
         JwtUtils.isValidToken(auth.token)
 
         and:
-        List roles = JwtUtils.getRolesFrom(auth.token)
+        List roles = TestOnlyJwtUtils.getRolesFromToken(auth.token)
 
         then:
         roles.size() == 1
